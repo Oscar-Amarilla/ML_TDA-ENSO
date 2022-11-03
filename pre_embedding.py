@@ -1,3 +1,5 @@
+''' This script treats every ecc as a linear combination, so every value in 
+the curve is seen as a coefficient of a basis. All these coefficients where extracted and indexed in order to express the curves in terms of the indeces of the coefficients thats compose them.'''
 def pre_embedding(dataset):
     
     import numpy as np
