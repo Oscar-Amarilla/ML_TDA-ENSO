@@ -1,0 +1,107 @@
+#This program extract topological information and export persistence diagrams, barcodes
+# and csv files with the persistence information. The csv files are aimed to be 
+# processed by ECC.py to get the Euler characteric curve of each of them.
+
+# Importing the TDA library.
+library("TDA")
+
+# Setting the work directory.
+setwd("/home/oscar_amarilla/Nidtec/ML_TDA-ENSO/Data/Monthly_SST")
+
+#Setting the time interval.
+y_i <- 1950
+
+y_f <- 2022
+
+#Setting time step.
+dt = 1
+
+#Initializing the year variable.
+y <- y_i
+
+#Initializing the month variable.
+m <- 1
+
+while(y<y_f){
+  
+  while(m!=13){
+    
+#Setting the file name.
+    holder <- paste(y, m, sep="_")
+    
+    file_name <- paste(holder, ".csv", sep="")
+    
+    sst <- read.csv(file_name, header = FALSE, sep = ",")
+    
+    sst <- as.matrix(sst)
+   
+# Creating a mesh for the plot.
+    Xlim <- c(1, 42) 
+    
+    Ylim <- c(1, 42)
+    
+    Tlim <- c(0,40)
+    
+    by <- 1
+    
+    Xseq <- seq(Xlim[1], Xlim[2], by = by)
+    
+    Yseq <- seq(Ylim[1], Ylim[2], by = by)
+    
+    Tseq <- seq(Tlim[1], Tlim[2], by = by)
+    
+    Grid <- expand.grid(Xseq, Yseq, Tseq)
+    
+z# Making the diagrams.
+    DiagGrid <- gridDiag(
+      X = NULL, FUN = NULL, lim = NULL, by = NULL, FUNvalues = sst, maxdimension = 2,
+      sublevel = TRUE, library = "GUDHI", location = FALSE,
+      printProgress = FALSE)
+    
+# PNG device
+    
+    dir <- "/home/oscar_amarilla/Nidtec/ML_TDA-ENSO/Data/"
+    
+    file_name <- paste(dir,"Barcodes/", holder, "_barcode.png", sep="")
+    
+    png(file_name, width = 960, height = 960)
+    
+# Ploting the barcode.
+    plot(DiagGrid[["diagram"]], barcode=TRUE, main = holder)
+
+# Close device
+    dev.off()  
+    
+# PNG device
+    file_name <- paste(dir, "Diagrams/", holder, "_diagram.png", sep="")
+    
+    png(file_name, width = 960, height = 960)
+    
+# Ploting the birth-death diagram.
+    plot(DiagGrid[["diagram"]], main = holder)
+
+# Close device
+    dev.off()
+    
+# Printing the topological data.
+    print(DiagGrid)
+    
+# Importing the filtration data.
+    
+    file_name <- paste(dir, "Filtration_raw/", holder, ".txt", sep="")
+    
+    cat(capture.output(print(DiagGrid), file=file_name))
+        
+#Going to the next month.
+    m <- m + 1
+    
+  }
+ 
+#When m==12, the while loop will broke and restart.
+  m = 1
+ 
+#Going to the next year.
+  y <- y + 1
+  
+}
+
