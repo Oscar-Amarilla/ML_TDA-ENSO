@@ -15,9 +15,9 @@ def year_month_num(year:int,month:int) ->int:
 
     Parameters
     ----------
-    year:int
+    year: int
         year of interest
-    month:int
+    month: int
         month of interest
 
     Returns
@@ -33,19 +33,19 @@ def get_extremes(temp_field:np.array, lower_temp:float=56.7, higher_temp:float=-
 
     Parameters
     ----------
-    temp_field:np.array
+    temp_field: np.array
         an n dimensional NumPy array with temperature measures.
      -- Initialization parameters --
-    lower_temp:float
+    lower_temp: float
         lowest temperature estimate.
-    higher_temp:float
+    higher_temp: float
         higher temperature estimate.
 
     Returns
     -------
-        lower_temp:float
+        lower_temp: float
             lowest temperature in the record.
-        higher_temp:float
+        higher_temp: float
             higher temperature in the record.
     """
     max_temp = temp_field.max()
@@ -66,7 +66,7 @@ def filtration(temp_field:np.array) -> np.array:
 
     Parameters
     ----------
-    temp_field:np.array
+    temp_field: np.array
         an n dimensional array with temperature measures.
 
     Returns
@@ -96,10 +96,10 @@ def Euler_characteristic(filtration:np.array,level:float):
 
     Parameters
     ----------
-    filtration:np.array
+    filtration: np.array
         an array with three columns, cotaining a particular Betti 
         number, its birth and its death.
-    level:float
+    level: float
         current value of the height function.
 
     Returns
@@ -133,12 +133,12 @@ def ECC(filtration:np.array, h_0:float, h_f:float) -> np.array:
 
     Parameters
     ----------
-    filtration:np.array
+    filtration: np.array
         an array with three columns, cotaining a particular Betti 
         number, its birth and its death.
     h_0:float
         point where the height value is 0.
-    h_f:float
+    h_f: float
         upper bound of the height function domain (-inf,h_f].
 
     Returns
@@ -165,12 +165,12 @@ def TDA_process(sst:nc._netCDF4.Dataset)->pd.DataFrame:
 
     Parameters
     ----------
-    sst:netCDF4
+    sst: netCDF4
         a database containing the global monthly mean sea surface 
         temperature from Jan 1891 to May 2022.
     Returns
     -------
-    database:pd.DataFrame
+    database: pd.DataFrame
         a dataframe containing every Euler characteristic curve. 
     """
     lower_temp= 56.7 
@@ -200,13 +200,14 @@ def TDA_process(sst:nc._netCDF4.Dataset)->pd.DataFrame:
 
 ##----------------------- ENSO block -------------------------------
 
-def phase_id(means:list):
+def phase_id(means:list) -> list:
     """
     Receives an array containing the quarterly moving average of the 
     study period and applies the ONI criteria to define the ENSO phase
-    of each month. If a quarter is declared as a particular phase, then 
+    of each month. 
 
-    ONI criteria:
+    ONI criteria
+    -------------
      If the quarterly moving average of the anomaly in the SST of the
      Niño 3.4 region in absolute value is greter than 0.5ºC for five 
      consecutive moving quarters, then it is declase a
@@ -214,70 +215,76 @@ def phase_id(means:list):
      - Niño phase: if the anomaly is positive.
      Otherwise, normal conditions (Neutral phase) are running.
 
-      
+    Labels
+    -------
+    Niña -> 0
+    Neutral -> 1
+    Niño -> 2
 
     Parameters
     ----------
-    means:list
+    means: list
         a list containing quarterly moving averages.
     Returns
     -------
-    database:pd.DataFrame
-        a dataframe containing every Euler characteristic curve. 
+    enso_phase: array
+        an array containing the ENSO phase of each month.
     """
+    # Initializing an array that will contain the ENSO
+    # phases.
     enso_phase = []*len(means)
-# Initializing a counter. This counter is part of the criteria for 
-# determine which phase is running in a moment of time.
     counter = 0
-# Going through the monthly anomaly.
     for i,mean in enumerate(means):
-# Determining a warm phase.
+    # Determining a warm phase.
         if mean >= 0.5:
             counter += 1
-# If the last five trimestres were above the 0.5 temperature
-# anomaly, a warm phase is declared.
             if counter >= 5:
-# Setting the actual place as a warm phase.
                 enso_phase.append(2)
-# Declaring the last 4 trimestres as part of the warm phase.            
                 for j in range(1,5):
                     enso_phase[i-j] = 2
             else:  
-# Declaring neutral phase; conditions weren't achived.  
                 enso_phase.append(1)
-# Determining a warm phase.
+    # Determining a cold phase.
         elif mean <= -0.5:
             counter += 1
-# If the last five trimestres were below the -0.5 temperature
-# anomaly, a cold phase is declared.
             if counter >= 5:
-# Setting the actual place as a cold phase.
                 enso_phase.append(0)
-# Declaring the last 4 trimestres as part of the cold phase.            
                 for j in range(1,5):
                     enso_phase[i-j] = 0
-# Declaring neutral phase; conditions weren't achived.  
             else:  
                 enso_phase.append(1)
+    # Normal conditions.
         else:  
             counter = 0
             enso_phase.append(1)
-    
     return enso_phase
 
 def ONI(data:pd.DataFrame) -> pd.DataFrame:
-    # Initializing the mean value array.
+    """
+    This sript computes the quaterly moving average of the SST anomaly of 
+    the whole period, then call to the phase_id function to identify 
+    each phase with respect to the ONI. The results are stored in a new
+    column in the input pandas DataFrame.
+
+    Parameters
+    ----------
+    data: pd.DataFrame
+        a pandas DataFrame containing information about the mean SST
+        of the Niño 3.4 region.
+
+    Returns
+    -------
+    data: pd.DataFrame
+        the same input but with a new column where each row is asociated with
+        an ENSO phase.
+    """
+    # Initializing the means array. 
     means = [1.5] 
-    # Computing the mean values.
     for i in range(1,len(data)):
         if data['Year'][i] < 2022:
             mean = round((data['Anomaly (ºC)'][i - 1] + data['Anomaly (ºC)'][i] + data['Anomaly (ºC)'][i + 1])/3, 1)
             means.append(mean)
-            
-    # Appliying the ONI criteria and matching every month with its trimestrer under the ONI criteria.
     phases = phase_id(means)
-    # Adjusting the dimensions of the dataframe. 
     data = data.drop(data.index[len(phases):len(data)])
-    # Adding a fourth column to the input data about the ENSO phases.
     data['Phase'] = phases
     return data

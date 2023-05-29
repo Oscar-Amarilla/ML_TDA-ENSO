@@ -6,6 +6,15 @@ import netCDF4 as nc
 from .transform_and_load import year_month_num
 
 def domain(data:nc._netCDF4.Dataset):
+    """
+    Plots the studied region in this proyect and highlight the 
+    Niño 3.4 region in the plot.
+    
+    Parameters
+    ----------
+    data: nc._netCDF4.Dataset
+        a netCDF data type with the mean SST field a month.
+    """
 
     # Get the latitude and longitude variables
     lat_var = data.variables['lat']
@@ -43,7 +52,19 @@ def domain(data:nc._netCDF4.Dataset):
     plt.savefig('outputs/june_17.png')
     plt.close(fig)
 
-def first_histo(enso_info:pd.DataFrame,kind:str='actual'):
+def phases_histo(enso_info:pd.DataFrame,kind:str='actual'):
+    """
+    Plots a histogram of the ditribution of the ENSO phases.
+
+    Parameters
+    ----------
+    enso_info: pd.DataFrame
+        a pandas DataFrame with information about the ENSO phases.
+
+    kind: str
+        a string telling if the data is restricted or not.
+    """
+
     if kind=='actual':
         plot_title = 'Histogram of ENSO phases in the period 1950-2021'
         image_path = 'outputs/Phases_distribution.png'
@@ -61,6 +82,19 @@ def first_histo(enso_info:pd.DataFrame,kind:str='actual'):
     plt.savefig(image_path)
 
 def neutro_distribution(enso_info:pd.DataFrame,neutral_index:list):
+    """
+    Plots a histogram of the ditribution of the normal conditions with respect
+    to the SST anomaly.
+
+    Parameters
+    ----------
+    enso_info: pd.DataFrame
+        a pandas DataFrame with information about the ENSO phases.
+
+    neutral_index: list
+        a list with the indexes of the rows related to the neutral conditions 
+        in enso_info.
+    """
     limits = [enso_info[enso_info["cat"]=='ln']['Anomaly (ºC)'].max(),
              enso_info[enso_info["cat"]=='un']['Anomaly (ºC)'].max(),
              enso_info[enso_info["cat"]=='c']['Anomaly (ºC)'].max(),
@@ -79,6 +113,26 @@ def neutro_distribution(enso_info:pd.DataFrame,neutral_index:list):
     plt.show()
 
 def compared_histo(enso_info:pd.DataFrame,enso_info_strat:pd.DataFrame,neutral_index:list,neutral_index_strat:list):
+    """
+    Plots two histograms, one of the actual ditribution of the neutral phases 
+    and a second under constrains.
+
+    Parameters
+    ----------
+    enso_info: pd.DataFrame
+        a pandas DataFrame with information about the ENSO phases.
+
+    enso_info_strt: pd.DataFrame
+        a pandas DataFrame with a redistribution of the netrual phases.
+
+    neutral_index: list
+        a list with the indexes of the rows related to the neutral conditions 
+        in enso_info.
+    neutral_index_strat: list
+        a list with the indexes of the rows related to the neutral conditions 
+        in enso_info_strat.
+    """
+
     ax = sbrn.histplot(data=enso_info['Anomaly (ºC)'][neutral_index], label='Actual ditribution', color='green',kde=True)
     sbrn.histplot(data=enso_info_strat['Anomaly (ºC)'][neutral_index_strat], label='Restricted ditribution', color='blue', kde=True)
     plt.title('Distribution of neutral phase with respect to the SST anomaly');

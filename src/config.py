@@ -1,6 +1,11 @@
+"""
+Here is all the necessary information related to input/output files 
+and directories so as not to directly metion them in the main codes.
+"""
 from pathlib import Path
 
 INPUT_DIR = str(Path.cwd() / "input")
+OUTPUT_DIR = str(Path.cwd() / "outputs")
 
 class FILES:
 
