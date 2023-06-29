@@ -32,6 +32,8 @@ The user is free to copy, modify, and distribute this proyect, even for commerci
 
 In this project the mean monthly sea surface temperature fields of the topical Pacific region defined by (10°N-10°S,160°E-90°O) of each month in the period 1950-2021 are taken and topological data analysis is applied on them. This process consists in computing the sublevel set filtration and the Euler characteristic curve of each field. Then, this curves are given as input data to a support vector machine algorithm to verify if the data set is linearly separable.
 
+The aim is to develop a classifier of ENSO phases based on topological data.
+
 ## El Niño-Southern Oscillation
 El Niño-Southern Oscillation (ENSO) is an irregular oscillation with periods in the range of two to seven years that alters the normal conditions of the atmosphere of the central tropical Pacific. It consists in a warm phase (El Niño), a cold phase (La Niña) and a neutral phase (normal conditions). Depending in which of phases of the extrmees phases it is active, its manifestation implies anomalies in the amount of rainfall in the regions bordering the Pacific, opening the possiblily of periods of droughts or floods[1][2].
 

@@ -24,7 +24,7 @@ def sst_fields(input_dir:str,file_name:str) -> nc._netCDF4.Dataset:
     data = nc.Dataset(f'{input_dir}/{file_name}')
     # Taking the necessary information to then close the netCDF file.
     sst = data['sst'][:].copy()
-    domain(data)
+    domain(data,1982,12)
     data.close()
     return sst
 
