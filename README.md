@@ -23,6 +23,7 @@ The user is free to copy, modify, and distribute this proyect, even for commerci
 5. [Dependencies](#dependencies)
 6. [Installation](#installation)
 7. [Structure of the Project](#structure-of-the-project)
+8. [Results](#results)
 9. [Future Work](#future-work)
 10. [References](#references)
 11. [Contributing to ML_TDA-ENSO](#contributing-to-ml_tda-enso)
@@ -172,6 +173,9 @@ The structure of the project is the following:
 |
 |__ README.md (Classified document, those who read it are in danger. Hint: your mother-in-law is involved.)
 ```  
+
+## Results
+The best model has as rbf kernel with $C=2$ and $\gamma=0.01$, giving a accuracy of 69%, appliying $k$-fold cross validation technique.
 
 ## Future work
 
