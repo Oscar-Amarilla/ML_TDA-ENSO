@@ -10,7 +10,7 @@ OUTPUT_DIR = str(Path.cwd() / "outputs")
 class FILES:
 
     def __init__(self) ->None:
-        self.nc_file = 'sst_mon_mean.nc'
-        self.csv_file = 'month_34_data.csv'
+        self.nc_file = 'cobe2_sst_mon_mean.nc'
+        self.csv_file = 'nino34.csv'
 
     

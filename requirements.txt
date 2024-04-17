@@ -1,9 +1,8 @@
-Jupyter==1.0.0
-matplotlib==3.6.2
-numpy==1.23.2
-pandas==1.5.3
-scikit-learn==1.2.2
-seaborn==0.11.2
-netCDF4==1.6.3
-rpy2==3.5.11
-
+jupyterlab
+matplotlib
+numpy
+pandas
+scikit-learn
+seaborn
+netCDF4
+rpy2

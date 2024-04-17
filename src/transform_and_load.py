@@ -175,7 +175,7 @@ def TDA_process(sst:nc._netCDF4.Dataset)->pd.DataFrame:
     """
     lower_temp= 56.7 
     higher_temp= -273.15
-    for year in range(1950,2022):
+    for year in range(1950,2024):
         for month in range(1,13):
             # Turning a month-year date into a number from 0 to len(data_time_domain).
             date_num = year_month_num(year,month)
@@ -187,7 +187,7 @@ def TDA_process(sst:nc._netCDF4.Dataset)->pd.DataFrame:
     # Initializing the daframe database.
     col_dim = int((higher_temp-lower_temp)/0.1)
     database = pd.DataFrame(columns=list(range(col_dim)))
-    for year in range(1950,2022):
+    for year in range(1950,2024):
         for month in range(1,13):
             date_num = year_month_num(year,month)
             temp_field = np.array(sst[date_num,79:101,160:270])
@@ -281,10 +281,36 @@ def ONI(data:pd.DataFrame) -> pd.DataFrame:
     # Initializing the means array. 
     means = [1.5] 
     for i in range(1,len(data)):
-        if data['Year'][i] < 2022:
+        if data['Year'][i] < 2024:
             mean = round((data['Anomaly (ºC)'][i - 1] + data['Anomaly (ºC)'][i] + data['Anomaly (ºC)'][i + 1])/3, 1)
             means.append(mean)
     phases = phase_id(means)
     data = data.drop(data.index[len(phases):len(data)])
     data['Phase'] = phases
     return data
+
+def mean_curve(dataframe: pd.DataFrame) -> pd.DataFrame:
+    """
+    This script extract the average and the standard 
+    deviation of the ECC of the temperature fields grouped 
+    by the ENSO phenomena phase each one is related to.
+
+    Parameters
+    ---------- 
+    dataframe: pd.DataFrame 
+        a dataframe containing the ECC of all the 
+        temperature fields in the time range studied.
+    enso_info: pd.DataFrame
+        a pandas DataFrame with information about the ENSO phases.
+
+    Return
+    ------
+    dataframe_desc: pd.DataFrame
+        a dataframe with the average and the standard 
+        deviation of the ECC related to a certain
+        ENSO phase.
+    """
+    dataframe_desc = pd.DataFrame(dataframe.describe().T['mean'])
+    dataframe_desc['upper_bound'] = dataframe.describe().T['mean'] + dataframe.describe().T['std']
+    dataframe_desc['lower_bound'] = dataframe.describe().T['mean'] - dataframe.describe().T['std']
+    return dataframe_desc

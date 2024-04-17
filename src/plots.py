@@ -193,7 +193,7 @@ def sst_field_plot(sst:np.array,year:int,month:int):
     """
 
     # Taking the mean sst of a particular time of the time domain of the field of interest.
-    sst_at_t = sst[year_month_num(1982,12),79:101,160:270]
+    sst_at_t = sst[year_month_num(year,month),79:101,160:270]
     # Create a 3D plot
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -289,4 +289,141 @@ def phases_vs_sst(enso_info:pd.DataFrame,target_names:list):
     plt.legend() 
     plt.savefig('outputs/Phases_vs_SST.png')
 
+    plt.show()
+
+def descr_phase_plot(
+    ninha_ecc_dscr: pd.DataFrame, 
+    neutral_ecc_dscr: pd.DataFrame, 
+    ninho_ecc_dscr: pd.DataFrame):
+    """
+    Display three plots showing the average and 
+    the standard deviation of the ECC of the temperature
+    fields grouped by the ENSO phenomena phase 
+    each one is related to.
+
+    Parameters
+    ----------
+    *_ecc_dscr: pd.DataFrame
+        A daframe containing the Euler characteristics curve of every
+        mean SST field related to the * phase.
+    """
+
+    fig, axs = plt.subplots(1, 3, figsize=(30, 7), sharex=True, sharey=True)
+    axs = axs.flatten()
+    
+    # First subplot
+    ax1 = axs[0]
+    ninha_ecc_dscr['mean'].plot(ax=ax1, legend=False, lw=3)
+    ax1.fill_between( ninha_ecc_dscr.index, ninha_ecc_dscr.lower_bound, ninha_ecc_dscr.upper_bound, alpha=0.3)
+    ax1.grid(True)
+    ax1.set_title('Niña', fontsize=25)
+    ax1.set_xlabel('Temperature (Cº)', fontsize=20)
+    ax1.set_ylabel('Euler Characteristic', fontsize=20)
+    ax1.tick_params(axis='x', labelsize=20)
+    ax1.tick_params(axis='y', labelsize=20)
+    
+    # Second subplot
+    ax2 = axs[1]
+    neutral_ecc_dscr['mean'].plot(ax=ax2, legend=False, lw=3)
+    ax2.fill_between( neutral_ecc_dscr.index, neutral_ecc_dscr.lower_bound, neutral_ecc_dscr.upper_bound, alpha=0.3)
+    ax2.grid(True)
+    ax2.set_title('Neutral', fontsize=25)
+    ax2.set_xlabel('Temperature (Cº)', fontsize=20)
+    ax2.tick_params(axis='x', labelsize=20)
+    
+    # Third subplot
+    ax3 = axs[2]
+    ninho_ecc_dscr['mean'].plot(ax=ax3, legend=False, lw=3)
+    ax3.fill_between( ninho_ecc_dscr.index, ninho_ecc_dscr.lower_bound, ninho_ecc_dscr.upper_bound, alpha=0.3)
+    ax3.grid(True)
+    ax3.legend(loc='upper left', fontsize=25)
+    ax3.set_title('Niño', fontsize=25)
+    ax3.set_xlabel('Temperature (Cº)', fontsize=20)
+    ax3.tick_params(axis='x', labelsize=20)
+    
+    fig.suptitle('Descriptive values of each level\n', fontsize=30)
+    plt.tight_layout()
+    plt.savefig('outputs/ECC_descriptive_values')
+    plt.show()
+
+def deep_descr_phase_plot(
+    ninha_ecc_weak_dscr: pd.DataFrame, 
+    ninha_ecc_moderate_dscr: pd.DataFrame, 
+    ninha_ecc_strong_dscr: pd.DataFrame,
+    ninho_ecc_weak_dscr: pd.DataFrame, 
+    ninho_ecc_moderate_dscr: pd.DataFrame, 
+    ninho_ecc_strong_dscr: pd.DataFrame):
+    """
+    Display six plots showing the average and 
+    the standard deviation of the ECC of the temperature
+    fields grouped by the ENSO phenomena phase 
+    each one is related to.
+
+    Parameters
+    ----------
+    *_ecc_#_dscr: pd.DataFrame
+        A daframe containing the Euler characteristics curve of every
+        mean SST field related to the * phase of # category.
+    """
+
+    fig, axs = plt.subplots(2, 3, figsize=(30, 10), sharex=True, sharey=True)
+    axs = axs.flatten()
+    
+    # First subplot
+    ax1 = axs[0]
+    ninha_ecc_weak_dscr['mean'].plot(ax=ax1, legend=False, lw=3)
+    ax1.fill_between(ninha_ecc_weak_dscr.index, ninha_ecc_weak_dscr.lower_bound, ninha_ecc_weak_dscr.upper_bound, alpha=0.3)
+    ax1.grid(True)
+    ax1.set_xlabel('Temperature (Cº)', fontsize=20)
+    ax1.set_ylabel('Euler Characteristic', fontsize=20)
+    ax1.set_title('Niña weak', fontsize=25)
+    ax1.tick_params(axis='y', labelsize=20)
+    
+    # Third subplot
+    ax2 = axs[3]
+    ninho_ecc_weak_dscr['mean'].plot(ax=ax2, legend=False, lw=3)
+    ax2.fill_between(ninho_ecc_weak_dscr.index, ninho_ecc_weak_dscr.lower_bound, ninho_ecc_weak_dscr.upper_bound, alpha=0.3)
+    ax2.grid(True)
+    ax2.set_title('Niño weak', fontsize=25)
+    ax2.set_xlabel('Temperature (Cº)', fontsize=20)
+    ax2.set_ylabel('Euler Characteristic', fontsize=20)
+    ax2.tick_params(axis='x', labelsize=20)
+    ax2.tick_params(axis='y', labelsize=20)
+    
+    # Second subplot
+    ax3 = axs[1]
+    ninha_ecc_moderate_dscr['mean'].plot(ax=ax3, legend=False, lw=3)
+    ax3.fill_between(ninha_ecc_moderate_dscr.index, ninha_ecc_moderate_dscr.lower_bound, ninha_ecc_moderate_dscr.upper_bound, alpha=0.3)
+    ax3.grid(True)
+    ax3.set_title('Niña moderate', fontsize=25)
+    
+    # Third subplot
+    ax4 = axs[4]
+    ninho_ecc_moderate_dscr['mean'].plot(ax=ax4, legend=False, lw=3)
+    ax4.fill_between(ninho_ecc_moderate_dscr.index, ninho_ecc_moderate_dscr.lower_bound, ninho_ecc_moderate_dscr.upper_bound, alpha=0.3)
+    ax4.grid(True)
+    ax4.set_title('Niño moderate', fontsize=25)
+    ax4.set_xlabel('Temperature (Cº)', fontsize=20)
+    ax4.tick_params(axis='x', labelsize=20)
+    
+    # Second subplot
+    ax5 = axs[2]
+    ninha_ecc_strong_dscr['mean'].plot(ax=ax5, legend=False, lw=3)
+    ax5.fill_between(ninha_ecc_strong_dscr.index, ninha_ecc_strong_dscr.lower_bound, ninha_ecc_strong_dscr.upper_bound, alpha=0.3)
+    ax5.grid(True)
+    ax5.set_title('Niña strong', fontsize=25)
+    ax5.legend(loc='upper right', fontsize=25)
+    
+    # Third subplot
+    ax6 = axs[5]
+    ninho_ecc_strong_dscr['mean'].plot(ax=ax6, legend=False, lw=3)
+    ax6.fill_between(ninho_ecc_strong_dscr.index, ninho_ecc_strong_dscr.lower_bound, ninho_ecc_strong_dscr.upper_bound, alpha=0.3)
+    ax6.grid(True)
+    ax6.set_title('Niño strong', fontsize=25)
+    ax6.set_xlabel('Temperature (Cº)', fontsize=20)
+    ax6.tick_params(axis='x', labelsize=20)
+    
+    fig.suptitle('Descriptive values of each level\n', fontsize=30)
+    plt.tight_layout()
+    plt.savefig('outputs/ECC_descriptive_values_strong_cases')
     plt.show()

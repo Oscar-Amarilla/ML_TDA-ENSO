@@ -9,7 +9,7 @@ def sst_fields(input_dir:str,file_name:str) -> nc._netCDF4.Dataset:
     project.
 
     Parameters
-    ----------
+    ---------- 
     input_dir: str
         directory where the data is located.
     file_name: str
